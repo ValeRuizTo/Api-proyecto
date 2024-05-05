@@ -7,6 +7,8 @@ app.use(express.json());
 const usersRouter = require("./routes/users");
 const coinRouter = require("./routes/coin");
 const registerRoute = require('./routes/register');
+const loginRoute = require('./routes/login');
+
 
 
 
@@ -14,6 +16,9 @@ app.use("/coin", coinRouter);
 app.use(logger);
 
 app.use('/register', registerRoute);
+app.use(logger);
+
+app.use('/login', loginRoute);
 app.use(logger);
 
 
