@@ -4,7 +4,6 @@ app.use(express.urlencoded({ extended: true })); // para acceder al body
 app.use(express.json());
 
 // Routes
-const usersRouter = require("./routes/users");
 const registerRouter = require("./routes/register");
 
 
@@ -14,10 +13,6 @@ app.use("/register", registerRouter);
 app.use(logger);
 
 
-
-
-app.use("/users", usersRouter);
-app.use(logger);
 
 // URL - Callback
 app.get("/", customLogger, (req, res) => {
