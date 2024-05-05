@@ -8,9 +8,9 @@ router.post("/", (req, res) => {
     lowercaseBody[key.toLowerCase()] = req.body[key];
   }
 
-  const { username, email, pasword } = lowercaseBody;
+  const { username, email, password } = lowercaseBody;
 
-  if (!username || !email || !pasword) {
+  if (!username || !email || !password) {
     return res.status(400).json({ error: 'Los parámetros son obligatorios.' });
   }
 
@@ -18,7 +18,7 @@ router.post("/", (req, res) => {
   const usuario = {
     username,
     email,
-    pasword,
+    password,
   };
 
   res.status(201).json(usuario);
