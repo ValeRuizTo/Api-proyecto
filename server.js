@@ -5,11 +5,15 @@ app.use(express.json());
 
 // Routes
 const usersRouter = require("./routes/users");
-const coinRouter = require("./routes/coin");
+const registerRouter = require("./routes/register");
 
 
-app.use("/coin", coinRouter);
+
+
+app.use("/register", registerRouter);
 app.use(logger);
+
+
 
 
 app.use("/users", usersRouter);
