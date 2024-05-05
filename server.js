@@ -1,11 +1,28 @@
 const express = require('express');
+const fs = require('fs');
 const { body, validationResult } = require('express-validator');
 
 const app = express();
 app.use(express.json());
 
 let users = [];
-let tweets = [];
+
+// Cargar usuarios desde el archivo JSON al iniciar el servidor
+try {
+  const usersData = fs.readFileSync('users.json');
+  users = JSON.parse(usersData);
+} catch (error) {
+  console.error('Error loading users:', error);
+}
+
+// Middleware para guardar usuarios en el archivo JSON
+function saveUsersToFile() {
+  fs.writeFile('users.json', JSON.stringify(users), (err) => {
+    if (err) {
+      console.error('Error saving users:', err);
+    }
+  });
+}
 
 app.post('/register', [
   body('username').notEmpty(),
@@ -24,37 +41,11 @@ app.post('/register', [
   }
 
   users.push({ username, email, password });
+  saveUsersToFile(); // Guardar cambios en el archivo JSON
   res.status(201).json({ message: 'User registered successfully' });
 });
 
-app.post('/login', (req, res) => {
-  const { username, password } = req.body;
-  const user = users.find(user => user.username === username);
-
-  if (!user || user.password !== password) {
-    return res.status(400).json({ message: 'Invalid username or password' });
-  }
-
-  res.json({ message: 'Login successful' });
-});
-
-app.get('/profile/:username', (req, res) => {
-  const username = req.params.username;
-  const user = users.find(user => user.username === username);
-  if (!user) {
-    return res.status(404).json({ message: 'User not found' });
-  }
-
-  const userTweets = tweets.filter(tweet => tweet.username === username);
-  res.json({ username: user.username, email: user.email, tweets: userTweets });
-});
-
-app.post('/tweet', (req, res) => {
-  const { content, username } = req.body;
-
-  tweets.push({ username, content });
-  res.status(201).json({ message: 'Tweet posted successfully' });
-});
+// Otras rutas y lógica del servidor...
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
