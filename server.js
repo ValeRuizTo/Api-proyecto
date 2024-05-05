@@ -1,20 +1,38 @@
-const express = require('express');
-const registerRoute = require('./routes/register');
-const loginRoute = require('./routes/login');
-const profileRoute = require('./routes/profile');
-const tweetRoute = require('./routes/tweet');
-
+const express = require("express");
 const app = express();
+app.use(express.urlencoded({ extended: true })); // para acceder al body
 app.use(express.json());
 
-app.use('/register', registerRoute);
-app.use('/login', loginRoute);
-app.use('/profile', profileRoute);
-app.use('/tweet', tweetRoute);
+// Routes
+const usersRouter = require("./routes/users");
+const coinRouter = require("./routes/coin");
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+
+app.use("/coin", coinRouter);
+app.use(logger);
+
+
+app.use("/users", usersRouter);
+app.use(logger);
+
+// URL - Callback
+app.get("/", customLogger, (req, res) => {
+  res.send("Im working :)\n Valentina Ruiz");
+});
+
+// MiddlewareS
+function logger(req, res, next) {
+  console.log(req.originalUrl + "from logger");
+  next();
+}
+
+function customLogger(req, res, next) {
+  console.log(req.originalUrl + "from custom logger");
+  next();
+}
+
+app.listen(5000, () => {
+  console.log("Server running on port 3000");
 });
 module.exports = app; 
 
