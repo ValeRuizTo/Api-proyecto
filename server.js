@@ -16,7 +16,7 @@ app.use(logger);
 
 // URL - Callback
 app.get("/", customLogger, (req, res) => {
-  res.send("Im working :)\n Valentina Ruiz");
+  res.send("Im working :)");
 });
 
 // MiddlewareS
