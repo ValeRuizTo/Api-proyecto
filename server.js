@@ -1,56 +1,49 @@
-const express = require('express');
-const fs = require('fs');
-const { body, validationResult } = require('express-validator');
-
+const express = require("express");
 const app = express();
+app.use(express.urlencoded({ extended: true })); // para acceder al body
 app.use(express.json());
 
-let users = [];
+// Routes
+const registerRoute = require('./routes/register');
+const loginRoute = require('./routes/login');
+const tweetRoute = require('./routes/tweet');
+const profileRoute = require('./routes/profile');
 
-// Cargar usuarios desde el archivo JSON al iniciar el servidor
-try {
-  const usersData = fs.readFileSync('users.json');
-  users = JSON.parse(usersData);
-} catch (error) {
-  console.error('Error loading users:', error);
-}
 
-// Middleware para guardar usuarios en el archivo JSON
-function saveUsersToFile() {
-  fs.writeFile('users.json', JSON.stringify(users), (err) => {
-    if (err) {
-      console.error('Error saving users:', err);
-    }
-  });
-}
 
-app.post('/register', [
-  body('username').notEmpty(),
-  body('email').isEmail(),
-  body('password').isLength({ min: 6 }),
-], (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
 
-  const { username, email, password } = req.body;
-  const existingUser = users.find(user => user.username === username);
-  if (existingUser) {
-    return res.status(400).json({ message: 'Username already exists' });
-  }
 
-  users.push({ username, email, password });
-  saveUsersToFile(); // Guardar cambios en el archivo JSON
-  res.status(201).json({ message: 'User registered successfully' });
+app.use('/register', registerRoute);
+app.use(logger);
+
+app.use('/login', loginRoute);
+app.use(logger);
+
+app.use('/profile', profileRoute);
+app.use(logger);
+
+
+app.use('/tweet', tweetRoute);
+app.use(logger);
+
+// URL - Callback
+app.get("/", customLogger, (req, res) => {
+  res.send("Im working :)\n Valentina Ruiz");
 });
 
-// Otras rutas y lógica del servidor...
+// MiddlewareS
+function logger(req, res, next) {
+  console.log(req.originalUrl + "from logger");
+  next();
+}
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+function customLogger(req, res, next) {
+  console.log(req.originalUrl + "from custom logger");
+  next();
+}
+
+app.listen(5000, () => {
+  console.log("Server running on port 3000");
 });
-
 module.exports = app; 
 
