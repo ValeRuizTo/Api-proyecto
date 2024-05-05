@@ -1,48 +1,65 @@
-const express = require("express");
+const express = require('express');
+const { body, validationResult } = require('express-validator');
+
 const app = express();
-app.use(express.urlencoded({ extended: true })); // para acceder al body
 app.use(express.json());
 
-// Routes
-const usersRouter = require("./routes/users");
-const registerRoute = require('./routes/register');
-const loginRoute = require('./routes/login');
-const profileRoute = require('./routes/profile');
+let users = [];
+let tweets = [];
 
+app.post('/register', [
+  body('username').notEmpty(),
+  body('email').isEmail(),
+  body('password').isLength({ min: 6 }),
+], (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
 
-app.use('/profile', profileRoute);
-app.use(logger);
+  const { username, email, password } = req.body;
+  const existingUser = users.find(user => user.username === username);
+  if (existingUser) {
+    return res.status(400).json({ message: 'Username already exists' });
+  }
 
-
-
-app.use('/register', registerRoute);
-app.use(logger);
-
-app.use('/login', loginRoute);
-app.use(logger);
-
-
-app.use("/users", usersRouter);
-app.use(logger);
-
-// URL - Callback
-app.get("/", customLogger, (req, res) => {
-  res.send("Im working :)\n Valentina Ruiz");
+  users.push({ username, email, password });
+  res.status(201).json({ message: 'User registered successfully' });
 });
 
-// MiddlewareS
-function logger(req, res, next) {
-  console.log(req.originalUrl + "from logger");
-  next();
-}
+app.post('/login', (req, res) => {
+  const { username, password } = req.body;
+  const user = users.find(user => user.username === username);
 
-function customLogger(req, res, next) {
-  console.log(req.originalUrl + "from custom logger");
-  next();
-}
+  if (!user || user.password !== password) {
+    return res.status(400).json({ message: 'Invalid username or password' });
+  }
 
-app.listen(5000, () => {
-  console.log("Server running on port 3000");
+  res.json({ message: 'Login successful' });
 });
+
+app.get('/profile/:username', (req, res) => {
+  const username = req.params.username;
+  const user = users.find(user => user.username === username);
+  if (!user) {
+    return res.status(404).json({ message: 'User not found' });
+  }
+
+  const userTweets = tweets.filter(tweet => tweet.username === username);
+  res.json({ username: user.username, email: user.email, tweets: userTweets });
+});
+
+app.post('/tweet', (req, res) => {
+  const { content, username } = req.body;
+
+  tweets.push({ username, content });
+  res.status(201).json({ message: 'Tweet posted successfully' });
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
+
 module.exports = app; 
 
