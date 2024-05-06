@@ -13,18 +13,14 @@ const profileRouter = require("./routes/profile");
 
 
 app.use("/profile", profileRouter);
-app.use(logger);
 
 
 app.use("/register", registerRouter);
-app.use(logger);
 
 
 app.use("/login", loginRouter);
-app.use(logger);
 
 app.use("/tweet", tweetRouter);
-app.use(logger);
 //imprime la ruta en la consola
 
 
