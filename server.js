@@ -5,12 +5,19 @@ app.use(express.json());
 
 // Routes
 const registerRouter = require("./routes/register");
+const loginRouter = require("./routes/login");
+
 
 
 
 
 app.use("/register", registerRouter);
 app.use(logger);
+
+
+app.use("/login", registerRouter);
+app.use(logger);
+
 
 
 
