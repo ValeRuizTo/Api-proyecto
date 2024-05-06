@@ -6,6 +6,8 @@ app.use(express.json());
 // Routes
 const registerRouter = require("./routes/register");
 const loginRouter = require("./routes/login");
+const tweetRouter = require("./routes/tweet");
+
 
 
 
@@ -18,6 +20,8 @@ app.use(logger);
 app.use("/login", loginRouter);
 app.use(logger);
 
+app.use("/tweet", tweetRouter);
+app.use(logger);
 
 
 
