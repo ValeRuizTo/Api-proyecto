@@ -12,12 +12,6 @@ router.post("/", (req, res) => {
   if (!username || !password) {
     return res.status(400).json({ error: 'Los parámetros son obligatorios.' });
   }
-
-  const usuario = {
-    username,
-    password,
-  };
-
   // Combinar ambas respuestas en un solo objeto JSON
   const response = {
     usuario,
