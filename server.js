@@ -13,14 +13,18 @@ const profileRouter = require("./routes/profile");
 
 
 app.use("/profile", profileRouter);
+app.use(logger);
 
 
 app.use("/register", registerRouter);
+app.use(logger);
 
 
 app.use("/login", loginRouter);
+app.use(logger);
 
 app.use("/tweet", tweetRouter);
+app.use(logger);
 //imprime la ruta en la consola
 
 
@@ -29,6 +33,16 @@ app.get("/", customLogger, (req, res) => {
   res.send("Im working :)");
 });
 
+// MiddlewareS
+function logger(req, res, next) {
+  console.log(req.originalUrl + "from logger");
+  next();
+}
+
+function customLogger(req, res, next) {
+  console.log(req.originalUrl + "from custom logger");
+  next();
+}
 
 app.listen(5000, () => {
   console.log("Server running on port 3000");
