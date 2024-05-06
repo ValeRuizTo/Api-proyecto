@@ -17,7 +17,7 @@ router.post("/", (req, res) => {
 
   const usuario = {
     username,
-    tweet,
+    content,
    
   };
 
