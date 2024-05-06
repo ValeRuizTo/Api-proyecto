@@ -3,6 +3,7 @@ const router = express.Router();
 
 
 router.post("/", (req, res) => {
+    //objeto vacio
   const lowercaseBody = {};
   for (let key in req.body) {
     lowercaseBody[key.toLowerCase()] = req.body[key];
