@@ -15,7 +15,7 @@ app.use("/register", registerRouter);
 app.use(logger);
 
 
-app.use("/login", registerRouter);
+app.use("/login", loginRouter);
 app.use(logger);
 
 

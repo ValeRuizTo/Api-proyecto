@@ -18,9 +18,11 @@ router.post("/", (req, res) => {
   const usuario = {
     username,
     password,
+    message:'Log-in correcto',
   };
 
   res.status(201).json(usuario);
+
 });
 
 
