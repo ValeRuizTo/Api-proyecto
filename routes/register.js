@@ -19,10 +19,10 @@ router.post("/", (req, res) => {
     username,
     email,
     password,
+    message:'Usuario registrado correctamente',
   };
 
   res.status(201).json(usuario);
-  res.json({ message: 'Usuario registrado correctamente' });
 
 });
 
