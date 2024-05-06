@@ -29,20 +29,17 @@ app.use(logger);
 
 
 // URL - Callback
-app.get("/", customLogger, (req, res) => {
+app.get("/", logger, (req, res) => {
   res.send("Im working :)");
 });
 
 // MiddlewareS
+//imprime la URL original 
 function logger(req, res, next) {
   console.log(req.originalUrl + "from logger");
   next();
 }
 
-function customLogger(req, res, next) {
-  console.log(req.originalUrl + "from custom logger");
-  next();
-}
 
 app.listen(5000, () => {
   console.log("Server running on port 3000");
