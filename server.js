@@ -7,10 +7,13 @@ app.use(express.json());
 const registerRouter = require("./routes/register");
 const loginRouter = require("./routes/login");
 const tweetRouter = require("./routes/tweet");
+const profileRouter = require("./routes/profile");
 
 
 
 
+app.use("/profile", profileRouter);
+app.use(logger);
 
 
 app.use("/register", registerRouter);
