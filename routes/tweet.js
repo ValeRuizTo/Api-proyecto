@@ -20,6 +20,7 @@ router.post("/", (req, res) => {
     username,
     content,
    
+    
   };
 
   res.status(201).json(usuario);
