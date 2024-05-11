@@ -6,7 +6,7 @@ const app = express();
 app.use(express.json());
 
 // Configurar Firebase Admin SDK con las credenciales
-const serviceAccount = require('./proyecto-89f44-firebase-adminsdk-dh4cl-5817736481.json');
+const serviceAccount = require('./firebase.json');
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
@@ -56,5 +56,5 @@ app.post("/register", async (req, res) => {
 // Escuchar en un puerto
 const PORT = process.env.PORT || 5050;
 app.listen(PORT, () => {
-  console.log(`Servidor corriendo en el puerto ${PORT}`);
+  console.log(`Servidor corriendo en el puerto ${PORT} :)`);
 });
