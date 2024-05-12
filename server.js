@@ -12,6 +12,9 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 });
 
+const registerRouter = require("./routes/register");
+app.use("/register", registerRouter);
+
 
 
 // Rutas de tu API
@@ -27,30 +30,6 @@ app.get('/users', async (req, res) => {
   }
 });
 
-
-// Ruta POST para registrar un usuario
-app.post("/register", async (req, res) => {
-  const { username, email, password } = req.body;
-
-  if (!username || !email || !password) {
-    return res.status(400).json({ error: 'Los parámetros son obligatorios.' });
-  }
-
-  try {
-    // Guardar la información del usuario en Firestore
-    await admin.firestore().collection('users').add({
-      username,
-      email,
-      password
-    });
-
-    // Enviar respuesta al cliente
-    res.status(201).json({ message: 'Usuario registrado correctamente :)' });
-  } catch (error) {
-    console.error('Error al registrar usuario:', error);
-    res.status(500).json({ error: 'Ocurrió un error al registrar usuario.' });
-  }
-});
 
 
 // Escuchar en un puerto
