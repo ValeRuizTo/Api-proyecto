@@ -15,7 +15,8 @@ admin.initializeApp({
 const registerRouter = require("./routes/register");
 app.use("/register", registerRouter);
 
-
+const loginRouter = require("./routes/login");
+app.use("/login", loginRouter);
 
 // Rutas de tu API
 // Ejemplo:
