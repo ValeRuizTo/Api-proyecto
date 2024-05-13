@@ -12,10 +12,11 @@ router.post("/", async (req, res) => {
 
   try {
     // Guardar la información del usuario en Firestore
-    await admin.firestore().collection('users').add({
+    const userRef = await admin.firestore().collection('users').add({
       username,
       email,
-      password
+      password,
+      tweets: []
     });
 
     // Enviar respuesta al cliente
@@ -25,6 +26,5 @@ router.post("/", async (req, res) => {
     res.status(500).json({ error: 'Ocurrió un error al registrar usuario.' });
   }
 });
-
 
 module.exports = router;
