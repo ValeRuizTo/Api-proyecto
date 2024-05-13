@@ -11,20 +11,37 @@ router.post("/", async (req, res) => {
   }
 
   try {
-// Buscar al usuario por correo electrónico o nombre de usuario
-const userSnapshot = await admin.firestore().collection('users').get();
+    // Buscar al usuario por correo electrónico o nombre de usuario
+    const userSnapshot = await admin.firestore().collection('users')
+      .where('username', '==', usernameOrEmail)
+      .get();
 
-let userData;
-userSnapshot.forEach(doc => {
-  const user = doc.data();
-  if (user.username === usernameOrEmail || user.email === usernameOrEmail) {
-    userData = user;
-  }
-});
+    let userData;
+    userSnapshot.forEach(doc => {
+      const user = doc.data();
+      // Verificar la contraseña solo si se encontró un usuario
+      if (user.password === password) {
+        userData = user;
+      }
+    });
 
-if (!userData) {
-  return res.status(404).json({ error: 'Usuario no encontrado.' });
-}
+    if (!userData) {
+      // Si no se encuentra el usuario por nombre de usuario, buscar por correo electrónico
+      const emailSnapshot = await admin.firestore().collection('users')
+        .where('email', '==', usernameOrEmail)
+        .get();
+
+      emailSnapshot.forEach(doc => {
+        const user = doc.data();
+        if (user.password === password) {
+          userData = user;
+        }
+      });
+    }
+
+    if (!userData) {
+      return res.status(404).json({ error: 'Usuario no encontrado o contraseña incorrecta.' });
+    }
 
     // Enviar la información del usuario al cliente
     res.status(200).json(userData);
