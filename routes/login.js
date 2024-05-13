@@ -22,6 +22,7 @@ router.post("/", async (req, res) => {
       // Verificar la contraseña solo si se encontró un usuario
       if (user.password === password) {
         userData = user;
+        delete userData.password; // Eliminar la contraseña del objeto userData
       }
     });
 
@@ -35,6 +36,7 @@ router.post("/", async (req, res) => {
         const user = doc.data();
         if (user.password === password) {
           userData = user;
+          delete userData.password; // Eliminar la contraseña del objeto userData
         }
       });
     }

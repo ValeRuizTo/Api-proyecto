@@ -22,6 +22,9 @@ app.use("/login", loginRouter);
 const tweetRouter = require("./routes/tweet");
 app.use("/tweet", tweetRouter);
 
+const profileRouter = require("./routes/profile");
+app.use("/", profileRouter);
+
 // Rutas de tu API
 // Ejemplo:
 app.get('/users', async (req, res) => {
