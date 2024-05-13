@@ -11,6 +11,12 @@ router.post("/", async (req, res) => {
   }
 
   try {
+    // Verificar si el nombre de usuario ya existe
+    const usernameSnapshot = await admin.firestore().collection('users').where('username', '==', username).get();
+    if (!usernameSnapshot.empty) {
+      return res.status(400).json({ error: 'El nombre de usuario ya está en uso.' });
+    }
+
     // Guardar la información del usuario en Firestore
     const userRef = await admin.firestore().collection('users').add({
       username,
