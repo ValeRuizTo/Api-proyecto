@@ -69,4 +69,39 @@ router.put("/:tweetIndex", jwtMiddleware, async (req, res) => {
   }
 });
 
+router.delete("/:tweetIndex", jwtMiddleware, async (req, res) => {
+  const { tweetIndex } = req.params;
+  const sessionUsername = req.user.usernameOrEmail; // Obtener el nombre de usuario del token JWT
+
+  try {
+    // Buscar al usuario por su username en la base de datos
+    const userSnapshot = await admin.firestore().collection('users').where('username', '==', sessionUsername).get();
+
+    if (userSnapshot.empty) {
+      return res.status(404).json({ error: 'Usuario no encontrado.' });
+    }
+
+    const userData = userSnapshot.docs[0].data();
+    const tweets = userData.tweets || [];
+
+    if (tweetIndex < 0 || tweetIndex >= tweets.length) {
+      return res.status(404).json({ error: 'Índice de tweet inválido.' });
+    }
+
+    // Eliminar el tweet del array de tweets en la base de datos
+    tweets.splice(tweetIndex, 1);
+
+    // Actualizar el array de tweets en la base de datos
+    await admin.firestore().collection('users').doc(userSnapshot.docs[0].id).update({
+      tweets: tweets
+    });
+
+    res.status(200).json({ message: 'Tweet eliminado correctamente.' });
+  } catch (error) {
+    console.error('Error al eliminar el tweet:', error);
+    res.status(500).json({ error: 'Ocurrió un error al eliminar el tweet.' });
+  }
+});
+
+
 module.exports = router;
