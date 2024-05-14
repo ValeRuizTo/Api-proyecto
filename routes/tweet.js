@@ -1,20 +1,26 @@
 const express = require("express");
 const router = express.Router();
 const admin = require('firebase-admin');
-const verifySessionCookie = require('../middleware/verifySessionCookie');
-const cookieParser = require('cookie-parser');
-router.use(cookieParser());
 
 // Ruta POST para buscar usuario y agregar tweet
-router.post("/", verifySessionCookie, async (req, res) => {
-  const { tweet } = req.body;
-  const userId = req.user.userId;
+router.post("/", async (req, res) => {
+  const { tweet, username } = req.body;
 
-  if (!tweet) {
-    return res.status(400).json({ error: 'El parámetro tweet es obligatorio.' });
+  if (!tweet || !username) {
+    return res.status(400).json({ error: 'Los parámetros tweet y username son obligatorios.' });
   }
 
   try {
+    // Buscar usuario por su username
+    const userSnapshot = await admin.firestore().collection('users').where('username', '==', username).get();
+
+    if (userSnapshot.empty) {
+      return res.status(404).json({ error: 'Usuario no encontrado.' });
+    }
+
+    // Obtener el userId del primer usuario encontrado (asumiendo que el username es único)
+    const userId = userSnapshot.docs[0].id;
+
     // Agregar tweet a la lista de tweets del usuario
     await admin.firestore().collection('users').doc(userId).update({
       tweets: admin.firestore.FieldValue.arrayUnion(tweet)
