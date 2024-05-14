@@ -1,8 +1,6 @@
 const admin = require('firebase-admin');
 const express = require("express");
 const app = express();
-const cookieParser = require("cookie-parser");
-app.use(cookieParser());
 app.use(express.urlencoded({ extended: true })); // para acceder al body
 app.use(express.json());
 

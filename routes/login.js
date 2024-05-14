@@ -1,10 +1,8 @@
 const express = require("express");
 const jwt = require('jsonwebtoken');
-const cookieParser = require('cookie-parser');
 const admin = require('firebase-admin');
 
 const router = express.Router();
-router.use(cookieParser());
 
 const secretKey = 'mysecretkey';
 
@@ -54,11 +52,9 @@ router.post("/", async (req, res) => {
     // Generar un token JWT
     const token = jwt.sign({ usernameOrEmail }, secretKey, { expiresIn: '1h' });
 
-    // Establecer el token como una cookie de sesión
-    res.cookie('session_token', token, { httpOnly: true, maxAge: 3600000 }); 
-
+  
     // Enviar la información del usuario y el token JWT al cliente
-    res.status(200).json({ userData });
+    res.status(200).json({ userData, token });
 
   } catch (error) {
     console.error('Error al iniciar sesión:', error);

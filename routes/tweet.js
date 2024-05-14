@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const admin = require('firebase-admin');
-const verifySessionCookie = require('../middleware/verifySessionCookie');
+const jwtMiddleware = require('../middleware/jwtMiddleware');
 
 // Ruta POST para buscar usuario y agregar tweet
-router.post("/", verifySessionCookie, async (req, res) => {
+router.post("/", jwtMiddleware, async (req, res) => {
   const { tweet } = req.body;
   const username = req.user.usernameOrEmail; // Obtener el nombre de usuario de la sesión
 
@@ -33,6 +33,39 @@ router.post("/", verifySessionCookie, async (req, res) => {
   } catch (error) {
     console.error('Error al agregar tweet:', error);
     res.status(500).json({ error: 'Ocurrió un error al agregar tweet.' });
+  }
+});
+router.put("/:tweetIndex", jwtMiddleware, async (req, res) => {
+  const { tweetIndex } = req.params;
+  const { tweet } = req.body;
+  const sessionUsername = req.user.usernameOrEmail;
+
+  try {
+    // Buscar al usuario por su username
+    const userSnapshot = await admin.firestore().collection('users').where('username', '==', sessionUsername).get();
+
+    if (userSnapshot.empty) {
+      return res.status(404).json({ error: 'Usuario no encontrado.' });
+    }
+
+    const userData = userSnapshot.docs[0].data();
+    const tweets = userData.tweets || [];
+
+    if (tweetIndex < 0 || tweetIndex >= tweets.length) {
+      return res.status(404).json({ error: 'Índice de tweet inválido.' });
+    }
+
+    tweets[tweetIndex] = tweet;
+
+    // Actualizar el array de tweets en la base de datos
+    await admin.firestore().collection('users').doc(userSnapshot.docs[0].id).update({
+      tweets: tweets
+    });
+
+    res.status(200).json({ message: 'Tweet modificado correctamente.' });
+  } catch (error) {
+    console.error('Error al modificar el tweet:', error);
+    res.status(500).json({ error: 'Ocurrió un error al modificar el tweet.' });
   }
 });
 
