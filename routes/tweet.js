@@ -3,10 +3,10 @@ const router = express.Router();
 const admin = require('firebase-admin');
 const verifySessionCookie = require('../middleware/verifySessionCookie');
 
-
 // Ruta POST para buscar usuario y agregar tweet
-router.post("/",verifySessionCookie, async (req, res) => {
-  const { tweet, username } = req.body;
+router.post("/", verifySessionCookie, async (req, res) => {
+  const { tweet } = req.body;
+  const username = req.user.usernameOrEmail; // Obtener el nombre de usuario de la sesión
 
   if (!tweet || !username) {
     return res.status(400).json({ error: 'Los parámetros tweet y username son obligatorios.' });

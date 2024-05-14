@@ -5,7 +5,7 @@ const verifySessionCookie = require('../middleware/verifySessionCookie');
 
 
 // Ruta GET para obtener el perfil de usuario por username
-router.get("/:username",verifySessionCookie, async (req, res) => {
+router.get("/:username", verifySessionCookie, async (req, res) => {
   const { username } = req.params;
 
   if (!username) {
@@ -16,7 +16,6 @@ router.get("/:username",verifySessionCookie, async (req, res) => {
     // Buscar al usuario por nombre de usuario
     const userSnapshot = await admin.firestore().collection('users')
       .where('username', '==', username)
-      .select('username', 'email', 'tweets')
       .get();
 
     let userData;
@@ -28,8 +27,17 @@ router.get("/:username",verifySessionCookie, async (req, res) => {
       return res.status(404).json({ error: 'Usuario no encontrado.' });
     }
 
-    // Enviar la información del usuario al cliente
-    res.status(200).json(userData);
+        // Verificar si el usuario de la sesión es el mismo que el usuario consultado
+    const sessionUsername = req.user.usernameOrEmail;
+    if (sessionUsername === username) {
+      // Si es el mismo usuario, enviar toda la información excepto la contraseña
+      const { password, ...userDataWithoutPassword } = userData; // Excluyendo la contraseña
+      res.status(200).json(userDataWithoutPassword);
+    } else {
+      // Si no es el mismo usuario, enviar solo el username y los tweets
+      const { username, tweets } = userData;
+      res.status(200).json({ username, tweets });
+    }
 
   } catch (error) {
     console.error('Error al buscar usuario por username:', error);
