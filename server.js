@@ -1,8 +1,9 @@
-const express = require('express');
 const admin = require('firebase-admin');
+const express = require("express");
 const app = express();
-
-// Middleware para analizar el cuerpo de la solicitud en formato JSON
+const cookieParser = require("cookie-parser");
+app.use(cookieParser());
+app.use(express.urlencoded({ extended: true })); // para acceder al body
 app.use(express.json());
 
 // Configurar Firebase Admin SDK con las credenciales
@@ -41,7 +42,7 @@ app.get('/users', async (req, res) => {
 
 
 // Escuchar en un puerto
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en el puerto ${PORT} :)`);
 });

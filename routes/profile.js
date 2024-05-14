@@ -1,9 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const admin = require('firebase-admin');
+const verifySessionCookie = require('../middleware/verifySessionCookie');
+
 
 // Ruta GET para obtener el perfil de usuario por username
-router.get("/:username", async (req, res) => {
+router.get("/:username",verifySessionCookie, async (req, res) => {
   const { username } = req.params;
 
   if (!username) {

@@ -1,9 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const admin = require('firebase-admin');
+const verifySessionCookie = require('../middleware/verifySessionCookie');
+
 
 // Ruta POST para buscar usuario y agregar tweet
-router.post("/", async (req, res) => {
+router.post("/",verifySessionCookie, async (req, res) => {
   const { tweet, username } = req.body;
 
   if (!tweet || !username) {
