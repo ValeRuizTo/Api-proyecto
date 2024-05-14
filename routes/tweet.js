@@ -6,7 +6,7 @@ const jwtMiddleware = require('../middleware/jwtMiddleware');
 // Ruta POST para buscar usuario y agregar tweet
 router.post("/", jwtMiddleware, async (req, res) => {
   const { tweet } = req.body;
-  const username = req.user.usernameOrEmail; // Obtener el nombre de usuario de la sesión
+  const username = req.user.usernameOrEmail; // Obtener el nombre de usuario del token JWT
 
   if (!tweet || !username) {
     return res.status(400).json({ error: 'Los parámetros tweet y username son obligatorios.' });
@@ -38,7 +38,7 @@ router.post("/", jwtMiddleware, async (req, res) => {
 router.put("/:tweetIndex", jwtMiddleware, async (req, res) => {
   const { tweetIndex } = req.params;
   const { tweet } = req.body;
-  const sessionUsername = req.user.usernameOrEmail;
+  const sessionUsername = req.user.usernameOrEmail; // Obtener el nombre de usuario del token JWT
 
   try {
     // Buscar al usuario por su username
