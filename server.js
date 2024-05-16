@@ -24,6 +24,10 @@ app.use("/tweet", tweetRouter);
 const profileRouter = require("./routes/profile");
 app.use("/", profileRouter);
 
+app.all('*', (req, res) => {
+  res.status(404).send("Error 404");
+});
+
 
 app.get("/", (req, res) => {
   res.send("Im working :)");
