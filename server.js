@@ -24,14 +24,15 @@ app.use("/tweet", tweetRouter);
 const profileRouter = require("./routes/profile");
 app.use("/", profileRouter);
 
+app.get("/", (req, res) => {
+  res.send("Im working :)");
+});
+
 app.all('*', (req, res) => {
   res.status(404).send("Error 404");
 });
 
 
-app.get("/", (req, res) => {
-  res.send("Im working :)");
-});
 
 
 // Escuchar en un puerto
