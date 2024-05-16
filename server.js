@@ -24,19 +24,10 @@ app.use("/tweet", tweetRouter);
 const profileRouter = require("./routes/profile");
 app.use("/", profileRouter);
 
-// Rutas de tu API
-// Ejemplo:
-app.get('/users', async (req, res) => {
-  try {
-    // Ejemplo de acceso a la base de datos de Firestore
-    const usuariosSnapshot = await admin.firestore().collection('users').get();
-    const usuarios = usuariosSnapshot.docs.map(doc => doc.data());
-    res.json(usuarios);
-  } catch (error) {
-    res.status(500).json({ message: 'Error al obtener usuarios', error: error.message });
-  }
-});
 
+app.get("/", (req, res) => {
+  res.send("Im working :)");
+});
 
 
 // Escuchar en un puerto
