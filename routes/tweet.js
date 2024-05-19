@@ -2,15 +2,17 @@ const express = require("express");
 const router = express.Router();
 const admin = require('firebase-admin');
 const jwtMiddleware = require('../middleware/jwtMiddleware');
-
 // Ruta POST para buscar usuario y agregar tweet
 router.post("/", jwtMiddleware, async (req, res) => {
-  const { tweet } = req.body;
+  const { tweet, hashtag } = req.body;
   const username = req.user.usernameOrEmail; // Obtener el nombre de usuario del token JWT
 
   if (!tweet || !username) {
     return res.status(400).json({ error: 'Los parámetros tweet y username son obligatorios.' });
   }
+
+  // Si no se proporciona un hashtag, usar #socialgarden por defecto
+  const finalHashtag = hashtag ? hashtag : '#socialgarden';
 
   try {
     // Buscar usuario por su username
@@ -23,9 +25,12 @@ router.post("/", jwtMiddleware, async (req, res) => {
     // Obtener el userId del primer usuario encontrado (asumiendo que el username es único)
     const userId = userSnapshot.docs[0].id;
 
+    // Crear el tweet con el hashtag
+    const tweetWithHashtag = `${tweet} ${finalHashtag}`;
+
     // Agregar tweet a la lista de tweets del usuario
     await admin.firestore().collection('users').doc(userId).update({
-      tweets: admin.firestore.FieldValue.arrayUnion(tweet)
+      tweets: admin.firestore.FieldValue.arrayUnion(tweetWithHashtag)
     });
 
     // Enviar respuesta al cliente
@@ -37,8 +42,11 @@ router.post("/", jwtMiddleware, async (req, res) => {
 });
 router.put("/:tweetIndex", jwtMiddleware, async (req, res) => {
   const { tweetIndex } = req.params;
-  const { tweet } = req.body;
+  const { tweet, hashtag } = req.body;
   const sessionUsername = req.user.usernameOrEmail; // Obtener el nombre de usuario del token JWT
+
+  // Si no se proporciona un hashtag, usar #socialgarden por defecto
+  const finalHashtag = hashtag ? hashtag : '#socialgarden';
 
   try {
     // Buscar al usuario por su username
@@ -55,7 +63,10 @@ router.put("/:tweetIndex", jwtMiddleware, async (req, res) => {
       return res.status(404).json({ error: 'Índice de tweet inválido.' });
     }
 
-    tweets[tweetIndex] = tweet;
+    // Crear el tweet con el hashtag
+    const tweetWithHashtag = `${tweet} ${finalHashtag}`;
+
+    tweets[tweetIndex] = tweetWithHashtag;
 
     // Actualizar el array de tweets en la base de datos
     await admin.firestore().collection('users').doc(userSnapshot.docs[0].id).update({
