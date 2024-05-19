@@ -1,6 +1,16 @@
 const admin = require('firebase-admin');
 const express = require("express");
+const cors = require('cors'); // Importa el paquete cors
+
 const app = express();
+
+// Configuración del middleware CORS
+app.use(cors({
+  origin: 'http://localhost:5174', // Reemplaza con la URL de tu aplicación frontend
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 app.use(express.urlencoded({ extended: true })); // para acceder al body
 app.use(express.json());
 
@@ -17,7 +27,6 @@ app.use("/register", registerRouter);
 const loginRouter = require("./routes/login");
 app.use("/login", loginRouter);
 
-
 const tweetRouter = require("./routes/tweet");
 app.use("/tweet", tweetRouter);
 
@@ -28,15 +37,12 @@ const searchRouter = require("./routes/search");
 app.use("/search", searchRouter);
 
 app.get("/", (req, res) => {
-  res.send("Im working :)");
+  res.send("I'm working :)");
 });
 
 app.all('*', (req, res) => {
   res.status(404).send("Error 404");
 });
-
-
-
 
 // Escuchar en un puerto
 const PORT = process.env.PORT || 5000;
