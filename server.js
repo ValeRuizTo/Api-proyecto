@@ -24,6 +24,9 @@ app.use("/tweet", tweetRouter);
 const profileRouter = require("./routes/profile");
 app.use("/", profileRouter);
 
+const searchRouter = require("./routes/search");
+app.use("/search", searchRouter);
+
 app.get("/", (req, res) => {
   res.send("Im working :)");
 });
