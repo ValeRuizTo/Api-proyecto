@@ -1,7 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const admin = require('firebase-admin');
-const jwtMiddleware = require('../middleware/jwtMiddleware');router.post("/", jwtMiddleware, async (req, res) => {
+const jwtMiddleware = require('../middleware/jwtMiddleware');
+
+router.post("/", jwtMiddleware, async (req, res) => {
   const { tweet, hashtag } = req.body;
   const username = req.user.usernameOrEmail; // Obtener el nombre de usuario del token JWT
 
