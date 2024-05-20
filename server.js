@@ -6,7 +6,7 @@ const app = express();
 
 // Configuración del middleware CORS
 app.use(cors({
-  origin: 'http://localhost:5175', // Reemplaza con la URL de tu aplicación frontend http://localhost:5175
+  origin: ['http://localhost:5175','https://social-garden.vercel.app/' ],// Reemplaza con la URL de tu aplicación frontend http://localhost:5175
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
