@@ -1,9 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const admin = require('firebase-admin');
-const jwtMiddleware = require('../middleware/jwtMiddleware');
-// Ruta POST para buscar usuario y agregar tweet
-router.post("/", jwtMiddleware, async (req, res) => {
+const jwtMiddleware = require('../middleware/jwtMiddleware');router.post("/", jwtMiddleware, async (req, res) => {
   const { tweet, hashtag } = req.body;
   const username = req.user.usernameOrEmail; // Obtener el nombre de usuario del token JWT
 
@@ -25,12 +23,12 @@ router.post("/", jwtMiddleware, async (req, res) => {
     // Obtener el userId del primer usuario encontrado (asumiendo que el username es único)
     const userId = userSnapshot.docs[0].id;
 
-    // Crear el tweet con el hashtag
-    const tweetWithHashtag = `${tweet} ${finalHashtag}`;
+    // Crear el objeto de tweet con el hashtag
+    const tweetObject = { tweet, hashtag: finalHashtag };
 
-    // Agregar tweet a la lista de tweets del usuario
+    // Agregar el objeto de tweet al array de tweets del usuario
     await admin.firestore().collection('users').doc(userId).update({
-      tweets: admin.firestore.FieldValue.arrayUnion(tweetWithHashtag)
+      tweets: admin.firestore.FieldValue.arrayUnion(tweetObject)
     });
 
     // Enviar respuesta al cliente
@@ -40,6 +38,7 @@ router.post("/", jwtMiddleware, async (req, res) => {
     res.status(500).json({ error: 'Ocurrió un error al agregar tweet.' });
   }
 });
+
 router.put("/:tweetIndex", jwtMiddleware, async (req, res) => {
   const { tweetIndex } = req.params;
   const { tweet, hashtag } = req.body;

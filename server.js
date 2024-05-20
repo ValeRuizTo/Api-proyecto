@@ -27,14 +27,19 @@ app.use("/register", registerRouter);
 const loginRouter = require("./routes/login");
 app.use("/login", loginRouter);
 
-const tweetRouter = require("./routes/tweet");
-app.use("/tweet", tweetRouter);
+const tweetRouter = require("./routes/newtweet");
+app.use("/newtweet", tweetRouter);
 
 const profileRouter = require("./routes/profile");
-app.use("/", profileRouter);
+app.use("/profile", profileRouter);
 
 const searchRouter = require("./routes/search");
 app.use("/search", searchRouter);
+
+const tweetsRouter = require("./routes/tweets");
+app.use("/tweets", tweetsRouter);
+
+
 
 app.get("/", (req, res) => {
   res.send("I'm working :)");
