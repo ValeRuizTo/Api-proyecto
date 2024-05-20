@@ -5,24 +5,8 @@ const cors = require('cors'); // Importa el paquete cors
 const app = express();
 
 // Configuración del middleware CORS
-//app.use(cors({
- // origin: 'http://localhost:5175',
- // methods: ['GET', 'POST', 'PUT', 'DELETE'],
-//  allowedHeaders: ['Content-Type', 'Authorization']
-//}));
-const allowedOrigins = ['http://localhost:5175', 'https://social-garden.vercel.app/'];
-
 app.use(cors({
-  origin: function(origin, callback) {
-    // Verifica si la solicitud proviene de una de las URLs permitidas
-    const isAllowed = allowedOrigins.includes(origin);
-    
-    if (isAllowed) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+  origin: 'http://localhost:5175',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
