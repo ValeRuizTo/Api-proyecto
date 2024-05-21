@@ -72,7 +72,8 @@ router.put("/:tweetIndex", jwtMiddleware, async (req, res) => {
     const tweets = userData.tweets || [];
 
     // Buscar el tweet con el índice especificado
-    const tweetToUpdateIndex = tweets.findIndex(t => t.index == tweetIndex);
+// Buscar el tweet con el índice especificado
+const tweetToUpdateIndex = tweets.findIndex(t => t.indice == tweetIndex);
 
     if (tweetToUpdateIndex === -1) {
       return res.status(404).json({ error: 'Índice de tweet inválido.' });
