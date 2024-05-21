@@ -30,10 +30,10 @@ router.post("/", jwtMiddleware, async (req, res) => {
     const userTweets = userDoc.data().tweets || [];
 
     // Calcular el índice para el nuevo tweet (0-100)
-    const indice = userTweets.length % 101;
+    const lugar = userTweets.length % 101;
 
     // Crear el objeto de tweet con el hashtag y el índice
-    const tweetObject = { tweet, hashtag: finalHashtag, indice };
+    const tweetObject = { tweet, hashtag: finalHashtag, lugar };
 
     // Agregar el objeto de tweet al array de tweets del usuario
     await admin.firestore().collection('users').doc(userId).update({
@@ -72,15 +72,14 @@ router.put("/:tweetIndex", jwtMiddleware, async (req, res) => {
     const tweets = userData.tweets || [];
 
     // Buscar el tweet con el índice especificado
-// Buscar el tweet con el índice especificado
-const tweetToUpdateIndex = tweets.findIndex(t => t.indice == tweetIndex);
+    const tweetToUpdateIndex = tweets.findIndex(t => t.lugar == tweetIndex);
 
     if (tweetToUpdateIndex === -1) {
       return res.status(404).json({ error: 'Índice de tweet inválido.' });
     }
 
     // Crear el objeto de tweet actualizado con el hashtag
-    const updatedTweet = { tweet, hashtag: finalHashtag, index: tweetIndex };
+    const updatedTweet = { tweet, hashtag: finalHashtag, lugar: tweetIndex };
 
     tweets[tweetToUpdateIndex] = updatedTweet;
 
@@ -95,9 +94,8 @@ const tweetToUpdateIndex = tweets.findIndex(t => t.indice == tweetIndex);
     res.status(500).json({ error: 'Ocurrió un error al modificar el tweet.' });
   }
 });
-
-router.delete("/:tweetIndex", jwtMiddleware, async (req, res) => {
-  const { tweetIndex } = req.params;
+router.delete("/:tweetLugar", jwtMiddleware, async (req, res) => {
+  const { tweetLugar } = req.params;
   const sessionUsername = req.user.usernameOrEmail; // Obtener el nombre de usuario del token JWT
 
   try {
@@ -111,8 +109,8 @@ router.delete("/:tweetIndex", jwtMiddleware, async (req, res) => {
     const userData = userSnapshot.docs[0].data();
     const tweets = userData.tweets || [];
 
-    // Buscar el índice del tweet con el índice especificado en el campo index
-    const tweetToDeleteIndex = tweets.findIndex(t => t.index == tweetIndex);
+    // Buscar el índice del tweet con el lugar especificado
+    const tweetToDeleteIndex = tweets.findIndex(t => t.lugar == tweetLugar);
 
     if (tweetToDeleteIndex === -1) {
       return res.status(404).json({ error: 'Índice de tweet inválido.' });
