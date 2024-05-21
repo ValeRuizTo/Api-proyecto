@@ -25,8 +25,15 @@ router.post("/", jwtMiddleware, async (req, res) => {
     // Obtener el userId del primer usuario encontrado (asumiendo que el username es único)
     const userId = userSnapshot.docs[0].id;
 
-    // Crear el objeto de tweet con el hashtag
-    const tweetObject = { tweet, hashtag: finalHashtag };
+    // Obtener los tweets existentes del usuario
+    const userDoc = await admin.firestore().collection('users').doc(userId).get();
+    const userTweets = userDoc.data().tweets || [];
+
+    // Calcular el índice para el nuevo tweet (0-100)
+    const index = userTweets.length % 101;
+
+    // Crear el objeto de tweet con el hashtag y el índice
+    const tweetObject = { tweet, hashtag: finalHashtag, index };
 
     // Agregar el objeto de tweet al array de tweets del usuario
     await admin.firestore().collection('users').doc(userId).update({
@@ -46,6 +53,10 @@ router.put("/:tweetIndex", jwtMiddleware, async (req, res) => {
   const { tweet, hashtag } = req.body;
   const sessionUsername = req.user.usernameOrEmail; // Obtener el nombre de usuario del token JWT
 
+  if (!tweet) {
+    return res.status(400).json({ error: 'El parámetro tweet es obligatorio.' });
+  }
+
   // Si no se proporciona un hashtag, usar #socialgarden por defecto
   const finalHashtag = hashtag ? hashtag : '#socialgarden';
 
@@ -60,14 +71,17 @@ router.put("/:tweetIndex", jwtMiddleware, async (req, res) => {
     const userData = userSnapshot.docs[0].data();
     const tweets = userData.tweets || [];
 
-    if (tweetIndex < 0 || tweetIndex >= tweets.length) {
+    // Buscar el tweet con el índice especificado
+    const tweetToUpdateIndex = tweets.findIndex(t => t.index == tweetIndex);
+
+    if (tweetToUpdateIndex === -1) {
       return res.status(404).json({ error: 'Índice de tweet inválido.' });
     }
 
-    // Crear el tweet con el hashtag
-    const tweetWithHashtag = `${tweet} ${finalHashtag}`;
+    // Crear el objeto de tweet actualizado con el hashtag
+    const updatedTweet = { tweet, hashtag: finalHashtag, index: tweetIndex };
 
-    tweets[tweetIndex] = tweetWithHashtag;
+    tweets[tweetToUpdateIndex] = updatedTweet;
 
     // Actualizar el array de tweets en la base de datos
     await admin.firestore().collection('users').doc(userSnapshot.docs[0].id).update({
@@ -96,12 +110,15 @@ router.delete("/:tweetIndex", jwtMiddleware, async (req, res) => {
     const userData = userSnapshot.docs[0].data();
     const tweets = userData.tweets || [];
 
-    if (tweetIndex < 0 || tweetIndex >= tweets.length) {
+    // Buscar el índice del tweet con el índice especificado en el campo index
+    const tweetToDeleteIndex = tweets.findIndex(t => t.index == tweetIndex);
+
+    if (tweetToDeleteIndex === -1) {
       return res.status(404).json({ error: 'Índice de tweet inválido.' });
     }
 
-    // Eliminar el tweet del array de tweets en la base de datos
-    tweets.splice(tweetIndex, 1);
+    // Eliminar el tweet del array de tweets
+    tweets.splice(tweetToDeleteIndex, 1);
 
     // Actualizar el array de tweets en la base de datos
     await admin.firestore().collection('users').doc(userSnapshot.docs[0].id).update({
@@ -114,6 +131,7 @@ router.delete("/:tweetIndex", jwtMiddleware, async (req, res) => {
     res.status(500).json({ error: 'Ocurrió un error al eliminar el tweet.' });
   }
 });
+
 
 
 module.exports = router;

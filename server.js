@@ -10,8 +10,8 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
-*/
 
+*/
 const allowedOrigins = ['http://localhost:5173', 'https://social-garden.vercel.app'];
 
 app.use(cors({
