@@ -11,7 +11,7 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 */
-const allowedOrigins = ['http://localhost:5173', 'https://social-garden.vercel.app','https://api-proyecto-beryl.vercel.app','http://localhost:5000'];
+const allowedOrigins = ['http://localhost:5173', 'https://social-garden.vercel.app'];
 
 app.use(cors({
   origin: function(origin, callback) {
