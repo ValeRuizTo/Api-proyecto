@@ -30,10 +30,10 @@ router.post("/", jwtMiddleware, async (req, res) => {
     const userTweets = userDoc.data().tweets || [];
 
     // Calcular el índice para el nuevo tweet (0-100)
-    const index = userTweets.length % 101;
+    const indice = userTweets.length % 101;
 
     // Crear el objeto de tweet con el hashtag y el índice
-    const tweetObject = { tweet, hashtag: finalHashtag, index };
+    const tweetObject = { tweet, hashtag: finalHashtag, indice };
 
     // Agregar el objeto de tweet al array de tweets del usuario
     await admin.firestore().collection('users').doc(userId).update({
