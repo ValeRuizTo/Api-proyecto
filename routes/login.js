@@ -46,7 +46,7 @@ router.post("/", async (req, res) => {
     }
 
     if (!userData) {
-      return res.status(404).json({ error: 'Usuario no encontrado.' });
+      return res.status(404).json({ error: '¡Credenciales incorrectas!' });
     }
 
     // Generar un token JWT
