@@ -22,7 +22,7 @@ router.get("/key", jwtMiddleware, async (req, res) => {
         user.tweets.forEach(tweet => {
           // Buscar tweets que coincidan con el contenido
           if (tweet.tweet && tweet.tweet.includes(search)) {
-            tweets.push(tweet);
+            tweets.push({ tweet, username: user.username });
           }
         });
       }
@@ -58,7 +58,7 @@ router.get("/hashtag", jwtMiddleware, async (req, res) => {
         user.tweets.forEach(tweet => {
           // Buscar tweets que coincidan con el hashtag
           if (tweet.hashtag && tweet.hashtag.includes(search)) {
-            tweets.push(tweet);
+            tweets.push({ tweet, username: user.username });
           }
         });
       }
